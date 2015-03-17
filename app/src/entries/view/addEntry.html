@@ -1,0 +1,10 @@
+<div class="container" layout vertical center>
+    add entry
+  <paper-input-decorator label="Url" style="max-width: 15em;">
+    <input is="core-input" type="text" ng-model="ctrl.url">
+  </paper-input-decorator>
+  <paper-input-decorator label="Title" style="max-width: 15em;">
+    <input is="core-input" type="text" ng-model="ctrl.title">
+  </paper-input-decorator>
+  <paper-button ng-click="ctrl.add()"> <core-icon icon="check"></core-icon> ok </paper-button>
+</div>

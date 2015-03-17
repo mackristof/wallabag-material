@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Wallabag</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="./lib/angular-material/angular-material.css" />
+    <link rel="stylesheet" href="assets/app.css" />
+</head>
+
+<body ng-app="WallabagApp" layout="column" ng-controller="MenuController as ml">
+
+    <md-toolbar layout="row">
+        <md-button class="menu" hide-gt-md ng-click="ml.toggleMenuList()" aria-label="Show Menu List">
+            <md-icon md-svg-icon="menu"></md-icon>
+        </md-button>
+        <h1>Wallabag</h1>
+    </md-toolbar>
+
+    <div flex layout="row">
+
+        <md-sidenav md-is-locked-open="$mdMedia('gt-md')" class="md-whiteframe-z1" md-component-id="left">
+            <md-toolbar md-theme="amber">
+                <h1 class="md-toolbar-tools">Actions</h1>
+            </md-toolbar>
+            <md-list>
+                <md-item ng-repeat="it in ml.items">
+                    <md-button ng-click="ml.selectItem(it)" ng-class="{'selected' : it === ml.selected }">
+                        <md-icon md-svg-icon="{{it.icon}}" class="menu-icon"></md-icon>
+                        {{it.name}}
+                    </md-button>
+                </md-item>
+            </md-list>
+        </md-sidenav>
+
+        <md-content flex id="content">
+            <div ng-view></div>
+        </md-content>
+
+    </div>
+
+    <script src="./lib/angular/angular.js"></script>
+    <script src="./lib/angular-animate/angular-animate.js"></script>
+    <script src="./lib/angular-aria/angular-aria.js"></script>
+    <script src="./lib/angular-material/angular-material.js"></script>
+    <script src="./lib/angular-resource/angular-resource.js"></script>
+    <script src="./lib/angular-route/angular-route.js"></script>
+    <script src="./lib/angular-sanitize/angular-sanitize.js"></script>
+    <script src="./lib/sha1.js"></script>
+    <script src="./lib/base64.js"></script>
+
+    <script src="./src/menu/MenuController.js"></script>
+    <script src="./src/entries/EntriesRest.js"></script>
+
+
+    <script type="text/javascript">
+
+        var loginRequired = function ($location, $q, $rootScope) {
+            var deferred = $q.defer();
+
+            if (!userIsAuthenticated($rootScope)) {
+                deferred.reject();
+                $location.path('/login').replace();
+            } else {
+                deferred.resolve();
+            }
+
+            return deferred.promise;
+        };
+
+        var redirectIfAuthenticated = function (route) {
+            return function ($location, $q, $rootScope) {
+
+                var deferred = $q.defer();
+
+                if (userIsAuthenticated($rootScope)) {
+                    deferred.reject();
+                    $location.path(route).replace();
+                } else {
+                    deferred.resolve();
+                }
+
+                return deferred.promise;
+            }
+        };
+        var userIsAuthenticated = function ($rootScope) {
+            console.log('userIsAuthen=' + $rootScope.login);
+            if ($rootScope.login) {
+                console.log('userIsAuthen=' + true);
+                return true;
+            } else {
+                console.log('userIsAuthen=' + false);
+                return false
+            }
+
+        };
+
+
+
+        angular
+            .module('WallabagApp', ['ngMaterial', 'ngRoute', 'menu', 'wallabag-restapi'])
+            .config(function ($mdThemingProvider, $mdIconProvider) {
+
+                $mdIconProvider
+                    .defaultIconSet("./assets/svg/share.svg", 128)
+                    .icon("menu", "./assets/svg/menu.svg", 24)
+                    .icon("share", "./assets/svg/share.svg", 24)
+                    .icon("unread", "./assets/svg/unread.svg", 24)
+                    .icon("favorite", "./assets/svg/favorite.svg", 24)
+                    .icon("archive", "./assets/svg/archive.svg", 24)
+                    .icon("tag", "./assets/svg/tag.svg", 24)
+                    .icon("config", "./assets/svg/config.svg", 24)
+                    .icon("about", "./assets/svg/about.svg", 24);
+
+                $mdThemingProvider.theme('default')
+                    .primaryPalette('brown')
+                    .accentPalette('red');
+
+            })
+
+                .config(function ($mdThemingProvider) {
+                $mdThemingProvider
+                    .theme('default')
+                    .primaryPalette('lime')
+                    .accentPalette('amber');
+            })
+
+                .config(['$routeProvider',
+                    function ($routeProvider) {
+                        $routeProvider
+                                .when('/unread', {
+                                    templateUrl: 'src/entries/view/unread.html',
+                                    controller: 'UnreadController',
+                                    controllerAs: 'ctrl',
+                                    resolve: {
+                                        loginRequired: loginRequired,
+                                        unreadURLs: ['$route', '$rootScope', 'EntryService', function ($route, $rootScope, EntryService) {
+                                            return EntryService.getUnreads().$promise;
+                                        }]
+                                    }
+                                })
+
+                                .when('/favorite', {
+                                    templateUrl: 'src/entries/view/favorites.html',
+                                    controller: 'FavoritesController',
+                                    controllerAs: 'ctrl',
+                                    resolve: {
+                                        loginRequired: loginRequired,
+                                        favoritesURLs: ['$route', '$rootScope', 'EntryService', function ($route, $rootScope, EntryService) {
+                                            return EntryService.getUnreads({
+                                                'user': $rootScope.username
+                                            }).$promise;
+                                        }]
+
+                                    }
+                                })
+                                .when('/addEntry', {
+                                    templateUrl: 'src/entries/view/addEntry.html',
+                                    controller: 'AddEntryController',
+                                    controllerAs: 'ctrl',
+                                    resolve: {
+                                        loginRequired: loginRequired
+                                    }
+                                })
+
+
+                                .otherwise({
+                                    templateUrl: 'src/entries/view/login.html',
+                                    controller: 'LoginController',
+                                    controllerAs: 'ctrl',
+                                    resolve: {
+                                        redirectIfAuthenticated: redirectIfAuthenticated('/unread')
+                                    }
+                                });
+                    }
+                ])
+
+        ;
+    </script>
+
+</body>
+
+</html>

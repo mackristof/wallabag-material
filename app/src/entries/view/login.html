@@ -1,0 +1,21 @@
+<section id="content" class="body">
+    <div class="entry-content">
+        <div layout="column" layout-align="center center">
+            <img alt="wallabag" src="https://www.wallabag.org/images/logo.png">
+            <br>
+            <md-input-container>
+                <label>Login</label>
+                <input type="text" ng-model="ctrl.username" required="required" style="max-width: 15em;">
+            </md-input-container>
+            <md-input-container>
+                <label>Password</label>
+                <input type="password" ng-model="ctrl.password" required="required" style="max-width: 15em;">
+            </md-input-container>
+            
+            <div layout="row" layout-sm="column" layout-align="center center">
+                <md-button ng-click="ctrl.login()" class="md-raised md-primary" style="margin: 1em; line-height: 25px;"> enter </md-button>
+                <md-button  class="md-raised md-accent"  style="margin: 1em; line-height: 25px;" >cancel </md-button>
+            </div>
+        </div>
+    </div>
+</section>

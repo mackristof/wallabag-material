@@ -1,0 +1,16 @@
+<!--<md-content class="md-padding">-->
+<section layout="column" >
+  <md-card ng-repeat="article in ctrl.unreadUrlList" ng-controller="entryController as entryCrtl" >
+      <md-card-content>
+        <h2>{{article.title}}</h2>
+        <div ng-bind-html="article.content.substring(0, 250)+' ...'"></div>
+        <md-button class="md-primary" ng-click="showGridBottomSheet($event, article.id)">
+            Details
+        </md-button>
+        <b layout="row" layout-align="center center" layout-margin>
+        {{alert}}
+        </b>
+      </md-card-content>
+  </md-card>
+</section>
+<!--</md-content>-->
