@@ -1,10 +1,18 @@
 <div class="container" layout vertical center>
     add entry
-  <paper-input-decorator label="Url" style="max-width: 15em;">
-    <input is="core-input" type="text" ng-model="ctrl.url">
-  </paper-input-decorator>
-  <paper-input-decorator label="Title" style="max-width: 15em;">
-    <input is="core-input" type="text" ng-model="ctrl.title">
-  </paper-input-decorator>
-  <paper-button ng-click="ctrl.add()"> <core-icon icon="check"></core-icon> ok </paper-button>
+    <md-content  class="md-padding" layout="column" layout-sm="column" style="font-size:1.2em">
+        <md-input-container>
+            <label>Url</label>
+            <input type="text" ng-model="ctrl.url" required="required" style="max-width: 15em;">
+        </md-input-container>
+        <md-input-container>
+            <label>Title</label>
+            <input type="text" ng-model="ctrl.title" style="max-width: 15em;">
+        </md-input-container>
+        <md-input-container>
+            <label>Tags (a comma-separated list of tags)</label>
+            <input type="text" ng-model="ctrl.tags" style="max-width: 15em;">
+        </md-input-container>
+        <md-button  ng-click="ctrl.add()" class="md-raised md-accent"  style="margin: 1em; line-height: 25px;"> Submit </md-button>
+    </md-content>
 </div>

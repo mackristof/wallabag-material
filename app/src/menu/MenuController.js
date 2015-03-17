@@ -2,7 +2,7 @@
 
     angular
         .module('menu', ['ngMaterial', 'wallabag-restapi'])
-        .controller('MenuController', ['$mdSidenav', '$mdBottomSheet', '$log', '$q', '$location',
+        .controller('MenuController', ['$mdSidenav', '$mdBottomSheet', '$log', '$q', '$location', '$rootScope',
             MenuController
         ]);
 
@@ -12,13 +12,15 @@
      * @param $mdBottomSheet
      * @constructor
      */
-    function MenuController($mdSidenav, $mdBottomSheet, $log, $q, $location) {
+    function MenuController($mdSidenav, $mdBottomSheet, $log, $q, $location, $rootScope) {
         var self = this;
 
         self.selected = null;
         self.items = [];
         self.selectItem = selectItem;
         self.toggleMenuList = toggleMenuList;
+        self.addEntry = addEntry;
+        self.searchEntry = searchEntry;
 
 
         // Load all menu Items
@@ -56,6 +58,17 @@
         // Internal methods
         // *********************************
 
+        function searchEntry() {
+            console.log('click searchEntries ' + $rootScope.login);
+
+        }
+
+        function addEntry() {
+            console.log('click addEntry ' + $rootScope.login);
+            $location.path("/addEntry")
+
+        }
+
         /**
          * First hide the bottomsheet IF visible, then
          * hide or Show the 'left' sideNav area
@@ -73,9 +86,9 @@
          */
         function selectItem(menuId) {
             console.log(menuId);
-            self.selected = angular.isNumber(menuId) ? $scope.items[menuId] : menuId;
+            self.selected = angular.isNumber(menuId) ? self.items[menuId] : menuId;
             $location.path(self.selected.url);
-            self.toggleList();
+            self.toggleMenuList();
         }
 
 
@@ -83,11 +96,11 @@
 
     angular.module('menu')
         .controller('LoginController', [
-             '$mdSidenav', '$mdBottomSheet', '$log', '$q','$rootScope', '$location', 'EntryService',
+             '$mdSidenav', '$mdBottomSheet', '$log', '$q','$rootScope', '$location', 'EntryService', '$controller',
             LoginController
         ]);
 
-    function LoginController($mdSidenav, $mdBottomSheet, $log, $q, $rootScope, $location, EntryService) {
+    function LoginController($mdSidenav, $mdBottomSheet, $log, $q, $rootScope, $location, EntryService, $controller) {
         var self = this;
 
         self.username = 'wallabag';
@@ -102,7 +115,9 @@
                     login: self.username
                 }, function (response) {
                     $rootScope.salt = response;
-                    $location.path("/unread");
+                    var MenuController = $controller('MenuController');
+                    MenuController.selectItem(0);
+
                 });
 
 
@@ -123,6 +138,30 @@
 
         return ctrl;
     });
+
+    angular.module('menu')
+        .controller('AddEntryController', function ($rootScope, EntryService, $location) {
+            var ctrl = {
+                username: $rootScope.login,
+                url: '',
+                title:'',
+                tags: ''
+            };
+            ctrl.add = function () {
+                EntryService.addEntry({
+                        'url': ctrl.url,
+                        'title': ctrl.title,
+                        'tags': ctrl.tags
+                    },
+                    function (response) { //success
+                        console.log('url added:' + ctrl.url);
+                        $location.path('/unread');
+
+                    });
+            };
+
+            return ctrl;
+        });
 
     angular.module('menu')
         .controller('entryController', function ($rootScope, EntryService, $scope, $timeout, $mdBottomSheet) {

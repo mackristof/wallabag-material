@@ -21,12 +21,18 @@
             <md-icon md-svg-icon="menu"></md-icon>
         </md-button>
         <h1>Wallabag</h1>
+        <md-button class="md-fab" aria-label="Add an Entry" style="top: 35px;right: 2em;" ng-click="ml.addEntry()" >
+            <md-icon md-svg-src="./assets/svg/add.svg"></md-icon>
+        </md-button>
+        <md-button class="md-fab" aria-label="Search" style="top: 35px;right: 1em;" ng-click="ml.searchEntries()">
+            <md-icon md-svg-src="./assets/svg/search.svg"></md-icon>
+        </md-button>
     </md-toolbar>
 
     <div flex layout="row">
 
         <md-sidenav md-is-locked-open="$mdMedia('gt-md')" class="md-whiteframe-z1" md-component-id="left">
-            <md-toolbar md-theme="amber">
+            <md-toolbar>
                 <h1 class="md-toolbar-tools">Actions</h1>
             </md-toolbar>
             <md-list>
@@ -118,18 +124,14 @@
                     .icon("config", "./assets/svg/config.svg", 24)
                     .icon("about", "./assets/svg/about.svg", 24);
 
-                $mdThemingProvider.theme('default')
-                    .primaryPalette('brown')
-                    .accentPalette('red');
+                    $mdThemingProvider
+                            .theme('default')
+                            .primaryPalette('grey')
+                            .accentPalette('orange');
 
             })
 
-                .config(function ($mdThemingProvider) {
-                $mdThemingProvider
-                    .theme('default')
-                    .primaryPalette('lime')
-                    .accentPalette('amber');
-            })
+
 
                 .config(['$routeProvider',
                     function ($routeProvider) {
@@ -173,10 +175,10 @@
                                 .otherwise({
                                     templateUrl: 'src/entries/view/login.html',
                                     controller: 'LoginController',
-                                    controllerAs: 'ctrl',
-                                    resolve: {
-                                        redirectIfAuthenticated: redirectIfAuthenticated('/unread')
-                                    }
+                                    controllerAs: 'ctrl'
+//                                    resolve: {
+//                                        redirectIfAuthenticated: redirectIfAuthenticated('/unread')
+//                                    }
                                 });
                     }
                 ])
