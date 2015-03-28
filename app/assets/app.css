@@ -7,7 +7,10 @@ body {
     padding: 0px;
 }
 /* Toolbar area */
-
+.md-whiteframe-z1 {
+  background-color: black;
+    color: white;
+}
 .menu {
     background-color: transparent;
     border: none;
@@ -119,8 +122,10 @@ md-bottom-sheet {
     position: fixed;
 }
 
-md-bottom-sheet md-icon {
-    margin-right: 20px;
+
+md-bottom-sheet  md-icon {
+  margin-right:20px;
+    position: absolute;
 }
 
 md-card {
