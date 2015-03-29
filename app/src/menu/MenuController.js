@@ -179,6 +179,15 @@
                     targetEvent: $event
                 }).then(function (clickedItem) {
                     $scope.alert = articleId + ' ' + clickedItem.name + ' clicked!';
+                    EntryService.updateEntry({id: articleId},clickedItem.update,
+                            function(succes){                    
+                                console.log("update succes "+ succes);               
+                            },
+                            function(error){
+                                console.log("update error "+ error);
+                            }
+                    );
+                    
                 });
             };
 
@@ -193,11 +202,13 @@
             $scope.items = [
                 {
                     name: 'Readed',
-                    icon: 'read'
+                    icon: 'read',
+                    update: {archive: true }
                 },
                 {
                     name: 'Favorite',
-                    icon: 'favorite'
+                    icon: 'favorite',
+                    update: {star: true }
                 },
                 {
                     name: 'Tags',

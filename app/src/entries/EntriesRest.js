@@ -106,9 +106,14 @@ angular.module('wallabag-restapi', ['ngResource'])
             'addEntry': {
                 url: 'http://v2.wallabag.org/api/entries.json',
                 method: 'POST'
+            },
+            'updateEntry': {
+                url: 'http://v2.wallabag.org/api/entries/:id.json',
+                method: 'PATCH'
             }
+            
         });
-        resource = tokenHandler.wrapActions(resource, ['getUnreads', 'addEntry']);
+        resource = tokenHandler.wrapActions(resource, ['getUnreads', 'addEntry', 'updateEntry']);
         return resource;
     }])
 
